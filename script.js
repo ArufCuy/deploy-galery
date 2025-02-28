@@ -21,91 +21,9 @@ const filterButtons = document.querySelectorAll(".filter-btn");
 const themeToggle = document.getElementById("themeToggle");
 const mainNav = document.getElementById("mainNav");
 
-// Sample data for the gallery
-const defaultMemories = [
-  {
-    id: 1,
-    title: "3 Cowok belum siap foto",
-    description: "Si Arup Belum siap tuh, tegang bet muka awokawok.",
-    date: "April 20, 2024",
-    category: ["mubarak", "friends"],
-    year: "2024",
-    image: "https://i.postimg.cc/kgs3NLHs/FNA02804.jpg",
-  },
-  {
-    id: 2,
-    title: "Dane nahan tawa kampret😭",
-    description: "Ngakak bet sama muka dane!",
-    date: "April 20, 2024",
-    category: ["mubarak", "friends"],
-    year: "2024",
-    image: "https://i.postimg.cc/jStY7RMC/FNA02807.jpg",
-  },
-  {
-    id: 3,
-    title: "Udah happy guys lulus SMA",
-    description:
-      "Surprise birthday party for Sarah. Her reaction was priceless!",
-    date: "April 20, 2024",
-    category: ["mubarak", "friends"],
-    year: "2024",
-    image: "https://i.postimg.cc/zGBpMMB0/FNA02825.jpg",
-  },
-  {
-    id: 4,
-    title: "Pose bebas",
-    description: "Nih lumayan nih fotonya.",
-    date: "April 20, 2024",
-    category: ["mubarak", "friends"],
-    year: "2024",
-    image: "https://i.postimg.cc/NfbpdYgK/FNA02877.jpg",
-  },
-  {
-    id: 5,
-    title: "Cuma ceweknya yang semangat foto",
-    description: "Cowoknya capek semua foto keknya.",
-    date: "April 20, 2024",
-    category: ["mubarak", "friends"],
-    year: "2024",
-    image: "https://i.postimg.cc/dVxnKBZv/FNA02878.jpg",
-  },
-  {
-    id: 6,
-    title: "Merapat!",
-    description: "Foto keluarga besar Mubarak fams.",
-    date: "April 20, 2024",
-    category: ["mubarak", "friends"],
-    year: "2024",
-    image: "https://i.postimg.cc/nVGkLZ93/FNA02884.jpg",
-  },
-  {
-    id: 7,
-    title: "Mencoba Keceh",
-    description: "Kaca mata jaya kegedean awokawok",
-    date: "April 20, 2024",
-    category: ["mubarak", "friends"],
-    year: "2024",
-    image: "https://i.postimg.cc/wTWQhVVJ/FNA02918.jpg",
-  },
-  {
-    id: 8,
-    title: "Merapat Lagi!",
-    description: "Kampusnya misah semua😭",
-    date: "April 20, 2024",
-    category: ["mubarak", "friends"],
-    year: "2024",
-    image: "https://i.postimg.cc/HxCwpPYG/FNA02892.jpg",
-  },
-  {
-    id: 9,
-    title: "Samping jaya tegang bet",
-    description: "Gak afdol kalau foto gak miring kepala cewenya!",
-    date: "April 20, 2024",
-    category: ["mubarak", "friends"],
-    year: "2024",
-    image: "https://i.postimg.cc/kgs3NLHs/FNA02804.jpg",
-  },
-];
+// Notion API Configuration
+const NOTION_API_TOKEN = "ntn_XY3676093712hJHw7Jowo9m7VXH1OUYPanQ1OyNj6IOawp"; // Tokenmu
+const NOTION_DATABASE_ID = "1a8015e9461b805685d9d04f38085571"; // Database ID-mu
 
 // Current state
 let currentFilter = "all";
@@ -116,49 +34,74 @@ let isDarkTheme = true;
 
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
-  // Load memories from localStorage or use default
-  loadMemories();
-
-  // Simulate loading
-  setTimeout(() => {
+  setTimeout(async () => {
+    await loadMemoriesFromNotion(); // Ambil data dari Notion
     loadingScreen.classList.add("hidden");
     initializeGallery();
   }, 1500);
 
-  // Initialize event listeners
   initEventListeners();
-
-  // Handle scroll animations
   initScrollAnimations();
 
-  // Check if dark theme is already set in localStorage
   const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "light") {
-    toggleTheme();
-  }
+  if (savedTheme === "light") toggleTheme();
 });
 
-// Load memories from localStorage
-function loadMemories() {
-  const savedMemories = localStorage.getItem("memories");
+// Load memories from Notion
+async function loadMemoriesFromNotion() {
+  try {
+    const response = await fetch(
+      `https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${NOTION_API_TOKEN}`,
+          "Content-Type": "application/json",
+          "Notion-Version": "2022-06-28",
+        },
+      }
+    );
 
-  if (savedMemories) {
-    // Combine saved memories with default ones
-    const parsedMemories = JSON.parse(savedMemories);
-    memories = [...parsedMemories, ...defaultMemories];
-  } else {
-    memories = [...defaultMemories];
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Gagal ambil data dari Notion: ${response.status} - ${errorText}`
+      );
+    }
+
+    const data = await response.json();
+    memories = data.results.map((page) => ({
+      id: page.id,
+      title: page.properties.Title?.title[0]?.text.content || "Untitled",
+      description:
+        page.properties.Description?.rich_text[0]?.text.content || "",
+      date: page.properties.Date?.date?.start || "Unknown Date",
+      category: page.properties.Category?.multi_select?.map(
+        (cat) => cat.name
+      ) || ["uncategorized"],
+      year: page.properties.Year?.rich_text[0]?.text.content || "Unknown Year",
+      image:
+        page.properties.Image?.files[0]?.file?.url ||
+        page.properties.Image?.rich_text[0]?.text.content ||
+        "https://via.placeholder.com/600x800?text=No+Image",
+    }));
+
+    filteredMemories = [...memories];
+  } catch (error) {
+    console.error("Error fetching from Notion:", error.message);
+    showNotification(
+      `Failed to load memories from Notion: ${error.message}`,
+      "error"
+    );
+    memories = [];
+    filteredMemories = [];
   }
-
-  filteredMemories = [...memories];
 }
 
 // Initialize the gallery with photos
 function initializeGallery() {
-  // Clear skeleton loading placeholders
   galleryGrid.innerHTML = "";
 
-  // Filter memories based on current filter
   filteredMemories =
     currentFilter === "all"
       ? [...memories]
@@ -168,21 +111,20 @@ function initializeGallery() {
             memory.year === currentFilter
         );
 
-  // Create gallery items
   filteredMemories.forEach((memory, index) => {
     const galleryItem = document.createElement("div");
     galleryItem.className = "gallery-item fade-in";
     galleryItem.style.animationDelay = `${index * 0.1}s`;
 
     galleryItem.innerHTML = `
-      <img src="${memory.image}" alt="${memory.title}" loading="lazy">
+      <img src="${memory.image}" alt="${
+      memory.title
+    }" loading="lazy" onerror="this.src='https://via.placeholder.com/600x800?text=Image+Not+Found';">
       <div class="gallery-item-overlay">
         <h3 class="gallery-item-title">${memory.title}</h3>
         <div class="gallery-item-meta">
           <span>${memory.date}</span>
-          <span>${memory.category.join(
-            ", "
-          )}</span> <!-- Tampilin semua kategori -->
+          <span>${memory.category.join(", ")}</span>
         </div>
       </div>
     `;
@@ -191,7 +133,6 @@ function initializeGallery() {
     galleryGrid.appendChild(galleryItem);
   });
 
-  // Show message if no memories match the filter
   if (filteredMemories.length === 0) {
     const emptyMessage = document.createElement("div");
     emptyMessage.className = "empty-gallery-message";
@@ -205,46 +146,29 @@ function initializeGallery() {
 
 // Initialize all event listeners
 function initEventListeners() {
-  // Filter buttons
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      // Update active state
       filterButtons.forEach((btn) => btn.classList.remove("active"));
       button.classList.add("active");
-
-      // Apply filter
       currentFilter = button.getAttribute("data-filter");
       initializeGallery();
     });
   });
 
-  // Lightbox controls
   lightboxClose.addEventListener("click", closeLightbox);
   lightboxPrev.addEventListener("click", () => navigateLightbox(-1));
   lightboxNext.addEventListener("click", () => navigateLightbox(1));
-
-  // Close lightbox with escape key
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && lightbox.classList.contains("active")) {
+    if (e.key === "Escape" && lightbox.classList.contains("active"))
       closeLightbox();
-    }
   });
 
-  // Modal controls
   addMemoryBtn.addEventListener("click", openAddMemoryModal);
   modalClose.addEventListener("click", closeAddMemoryModal);
   cancelAddMemory.addEventListener("click", closeAddMemoryModal);
-
-  // Form submission
   addMemoryForm.addEventListener("submit", handleAddMemory);
-
-  // File input preview
   fileInput.addEventListener("change", handleFilePreview);
-
-  // Theme toggle
   themeToggle.addEventListener("click", toggleTheme);
-
-  // Scroll event for navbar
   window.addEventListener("scroll", handleScroll);
 }
 
@@ -257,16 +181,16 @@ function openLightbox(index) {
   lightboxTitle.textContent = memory.title;
   lightboxDescription.textContent = memory.description;
   lightboxDate.textContent = memory.date;
-  lightboxCategory.textContent = memory.category;
+  lightboxCategory.textContent = memory.category.join(", ");
 
   lightbox.classList.add("active");
-  document.body.style.overflow = "hidden"; // Prevent scrolling
+  document.body.style.overflow = "hidden";
 }
 
 // Close the lightbox
 function closeLightbox() {
   lightbox.classList.remove("active");
-  document.body.style.overflow = ""; // Restore scrolling
+  document.body.style.overflow = "";
 }
 
 // Navigate through images in the lightbox
@@ -280,9 +204,7 @@ function navigateLightbox(direction) {
 // Open the add memory modal
 function openAddMemoryModal() {
   addMemoryModal.classList.add("active");
-  document.body.style.overflow = "hidden"; // Prevent scrolling
-
-  // Set default date to today
+  document.body.style.overflow = "hidden";
   document.getElementById("memoryDate").valueAsDate = new Date();
 }
 
@@ -291,7 +213,7 @@ function closeAddMemoryModal() {
   addMemoryModal.classList.remove("active");
   addMemoryForm.reset();
   filePreview.innerHTML = "";
-  document.body.style.overflow = ""; // Restore scrolling
+  document.body.style.overflow = "";
 }
 
 // Handle file input preview
@@ -311,74 +233,95 @@ function handleFilePreview(e) {
   }
 }
 
-// Handle form submission for adding a new memory
-function handleAddMemory(e) {
+// Handle form submission for adding a new memory to Notion
+async function handleAddMemory(e) {
   e.preventDefault();
 
-  // Get file
   const file = fileInput.files[0];
-
   if (!file) {
     showNotification("Please select an image", "error");
     return;
   }
 
   const reader = new FileReader();
-  reader.onload = function (event) {
-    // Create new memory object
+  reader.onload = async function (event) {
+    const selectedCategories = Array.from(
+      document.getElementById("memoryCategory").selectedOptions
+    ).map((option) => option.value);
+
     const newMemory = {
-      id: Date.now(), // Use timestamp as ID
-      title: document.getElementById("memoryTitle").value,
-      description: document.getElementById("memoryDescription").value,
-      date: new Date(
-        document.getElementById("memoryDate").value
-      ).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
-      category: document.getElementById("memoryCategory").value,
-      year: new Date(document.getElementById("memoryDate").value)
-        .getFullYear()
-        .toString(),
-      image: event.target.result,
+      id: Date.now(),
+      title: document.getElementById("memoryTitle").value || "Untitled",
+      description: document.getElementById("memoryDescription").value || "",
+      date:
+        new Date(
+          document.getElementById("memoryDate").value
+        ).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }) || new Date().toLocaleDateString("en-US"),
+      category:
+        selectedCategories.length > 0 ? selectedCategories : ["uncategorized"],
+      year:
+        new Date(document.getElementById("memoryDate").value)
+          .getFullYear()
+          .toString() || new Date().getFullYear().toString(),
+      image: event.target.result, // Base64 image
     };
 
-    // Get existing memories from localStorage
-    let savedMemories = JSON.parse(localStorage.getItem("memories") || "[]");
-
-    // Add new memory
-    savedMemories.unshift(newMemory);
-
-    // Save to localStorage
-    localStorage.setItem("memories", JSON.stringify(savedMemories));
-
-    // Update memories array
-    memories = [...savedMemories, ...defaultMemories];
-
-    // Reset filter to show all
-    currentFilter = "all";
-    filterButtons.forEach((btn) => btn.classList.remove("active"));
-    document.querySelector('[data-filter="all"]').classList.add("active");
-
-    // Refresh gallery
-    initializeGallery();
-
-    // Close modal
-    closeAddMemoryModal();
-
-    // Show success message
-    showNotification("Memory added successfully!");
+    try {
+      await saveToNotion(newMemory);
+      showNotification("Memory added successfully!");
+      closeAddMemoryModal();
+      window.location.reload(); // Refresh halaman
+    } catch (error) {
+      console.error("Error saving to Notion:", error);
+      showNotification("Failed to save memory to Notion", "error");
+    }
   };
 
   reader.readAsDataURL(file);
+}
+
+// Save memory to Notion
+async function saveToNotion(memory) {
+  const response = await fetch("https://api.notion.com/v1/pages", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${NOTION_API_TOKEN}`,
+      "Content-Type": "application/json",
+      "Notion-Version": "2022-06-28",
+    },
+    body: JSON.stringify({
+      parent: { database_id: NOTION_DATABASE_ID },
+      properties: {
+        Title: { title: [{ text: { content: memory.title } }] },
+        Description: { rich_text: [{ text: { content: memory.description } }] },
+        Date: { date: { start: memory.date } },
+        Category: {
+          multi_select: memory.category.map((cat) => ({ name: cat })),
+        },
+        Year: { rich_text: [{ text: { content: memory.year } }] },
+        Image: {
+          files: [
+            { name: `${memory.title}.jpg`, external: { url: memory.image } },
+          ],
+        },
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error("Failed to save to Notion: " + errorText);
+  }
 }
 
 // Show a notification message
 function showNotification(message, type = "success") {
   const notification = document.createElement("div");
   notification.className = `notification ${type} scale-in`;
-
   const icon = type === "success" ? "check-circle" : "exclamation-circle";
 
   notification.innerHTML = `
@@ -389,20 +332,15 @@ function showNotification(message, type = "success") {
   `;
 
   document.body.appendChild(notification);
-
-  // Remove notification after 3 seconds
   setTimeout(() => {
     notification.classList.add("fade-out");
-    setTimeout(() => {
-      notification.remove();
-    }, 300);
+    setTimeout(() => notification.remove(), 300);
   }, 3000);
 }
 
 // Toggle between dark and light theme
 function toggleTheme() {
   isDarkTheme = !isDarkTheme;
-
   if (isDarkTheme) {
     document.documentElement.style.setProperty("--bg-primary", "#121212");
     document.documentElement.style.setProperty("--bg-secondary", "#1e1e1e");
@@ -451,7 +389,6 @@ function initScrollAnimations() {
     { threshold: 0.1 }
   );
 
-  // Observe all sections
   document.querySelectorAll("section").forEach((section) => {
     section.classList.add("hidden");
     observer.observe(section);
@@ -465,28 +402,35 @@ style.textContent = `
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: var(--accent-primary);
+    background-color: var(--accent-primary, #6200ea);
     color: white;
     padding: 15px 20px;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-soft);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     z-index: 1000;
   }
-  
   .notification-content {
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  
   .notification.fade-out {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.3s, transform 0.3s;
   }
-  
   .notification.error {
     background-color: #e74c3c;
+  }
+  .hidden {
+    opacity: 0;
+  }
+  .fade-in {
+    animation: fadeIn 0.5s ease-in forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 `;
 document.head.appendChild(style);
