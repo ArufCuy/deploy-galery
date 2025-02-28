@@ -21,7 +21,28 @@ const filterButtons = document.querySelectorAll(".filter-btn");
 const themeToggle = document.getElementById("themeToggle");
 const mainNav = document.getElementById("mainNav");
 
-// Sample data for the gallery
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyC-cA5m5vvM_D5YEytpDR_iMx6DXkW16L8",
+  authDomain: "upload-img-ff1b5.firebaseapp.com",
+  projectId: "upload-img-ff1b5",
+  storageBucket: "upload-img-ff1b5.firebasestorage.app",
+  messagingSenderId: "231296372256",
+  appId: "1:231296372256:web:6ef0f8f938edb1a9fb3645",
+};
+
+// Deklarasi db di luar blok
+let db;
+
+// Pastikan Firebase ada sebelum inisialisasi
+if (typeof firebase === "undefined") {
+  console.error("Firebase SDK not loaded. Check script tags in HTML.");
+} else {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore(); // Inisialisasi db di sini
+}
+
+// Sample data for the gallery (sebagai fallback)
 const defaultMemories = [
   {
     id: 1,
@@ -116,49 +137,70 @@ let isDarkTheme = true;
 
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
-  // Load memories from localStorage or use default
-  loadMemories();
-
-  // Simulate loading
-  setTimeout(() => {
-    loadingScreen.classList.add("hidden");
-    initializeGallery();
-  }, 1500);
-
-  // Initialize event listeners
-  initEventListeners();
-
-  // Handle scroll animations
-  initScrollAnimations();
-
-  // Check if dark theme is already set in localStorage
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "light") {
-    toggleTheme();
+  console.log("App starting...");
+  if (typeof firebase !== "undefined" && db) {
+    loadMemoriesFromFirebase();
+    setTimeout(() => {
+      console.log("Hiding loading screen...");
+      loadingScreen.classList.add("hidden");
+      initializeGallery();
+    }, 2000);
+    initEventListeners();
+    initScrollAnimations();
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      toggleTheme();
+    }
+  } else {
+    console.error("Firebase not available, loading default memories...");
+    memories = [...defaultMemories];
+    filteredMemories = [...memories];
+    setTimeout(() => {
+      loadingScreen.classList.add("hidden");
+      initializeGallery();
+    }, 2000);
+    initEventListeners();
+    initScrollAnimations();
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      toggleTheme();
+    }
   }
 });
 
-// Load memories from localStorage
-function loadMemories() {
-  const savedMemories = localStorage.getItem("memories");
-
-  if (savedMemories) {
-    // Combine saved memories with default ones
-    const parsedMemories = JSON.parse(savedMemories);
-    memories = [...parsedMemories, ...defaultMemories];
-  } else {
-    memories = [...defaultMemories];
-  }
-
-  filteredMemories = [...memories];
+// Load memories from Firebase with real-time listener
+function loadMemoriesFromFirebase() {
+  console.log("Loading memories from Firebase...");
+  db.collection("memories")
+    .orderBy("id", "desc")
+    .onSnapshot(
+      (snapshot) => {
+        console.log("Snapshot received:", snapshot.docs.length, "items");
+        memories = snapshot.docs.map((doc) => doc.data());
+        if (memories.length === 0) {
+          console.log("No data in Firebase, using default memories...");
+          memories = [...defaultMemories];
+        }
+        filteredMemories = [...memories];
+        initializeGallery();
+      },
+      (error) => {
+        console.error("Error loading memories from Firebase:", error);
+        memories = [...defaultMemories];
+        filteredMemories = [...memories];
+        initializeGallery();
+        showNotification(
+          "Failed to connect to Firebase, using default data",
+          "error"
+        );
+      }
+    );
 }
 
 // Initialize the gallery with photos
 function initializeGallery() {
-  // Clear skeleton loading placeholders
+  console.log("Initializing gallery with", filteredMemories.length, "items");
   galleryGrid.innerHTML = "";
-
-  // Filter memories based on current filter
   filteredMemories =
     currentFilter === "all"
       ? [...memories]
@@ -168,7 +210,6 @@ function initializeGallery() {
             memory.year === currentFilter
         );
 
-  // Create gallery items
   filteredMemories.forEach((memory, index) => {
     const galleryItem = document.createElement("div");
     galleryItem.className = "gallery-item fade-in";
@@ -180,9 +221,7 @@ function initializeGallery() {
         <h3 class="gallery-item-title">${memory.title}</h3>
         <div class="gallery-item-meta">
           <span>${memory.date}</span>
-          <span>${memory.category.join(
-            ", "
-          )}</span> <!-- Tampilin semua kategori -->
+          <span>${memory.category.join(", ")}</span>
         </div>
       </div>
     `;
@@ -191,7 +230,6 @@ function initializeGallery() {
     galleryGrid.appendChild(galleryItem);
   });
 
-  // Show message if no memories match the filter
   if (filteredMemories.length === 0) {
     const emptyMessage = document.createElement("div");
     emptyMessage.className = "empty-gallery-message";
@@ -205,46 +243,32 @@ function initializeGallery() {
 
 // Initialize all event listeners
 function initEventListeners() {
-  // Filter buttons
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      // Update active state
       filterButtons.forEach((btn) => btn.classList.remove("active"));
       button.classList.add("active");
-
-      // Apply filter
       currentFilter = button.getAttribute("data-filter");
       initializeGallery();
     });
   });
 
-  // Lightbox controls
   lightboxClose.addEventListener("click", closeLightbox);
   lightboxPrev.addEventListener("click", () => navigateLightbox(-1));
   lightboxNext.addEventListener("click", () => navigateLightbox(1));
 
-  // Close lightbox with escape key
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && lightbox.classList.contains("active")) {
       closeLightbox();
     }
   });
 
-  // Modal controls
   addMemoryBtn.addEventListener("click", openAddMemoryModal);
   modalClose.addEventListener("click", closeAddMemoryModal);
   cancelAddMemory.addEventListener("click", closeAddMemoryModal);
 
-  // Form submission
   addMemoryForm.addEventListener("submit", handleAddMemory);
-
-  // File input preview
   fileInput.addEventListener("change", handleFilePreview);
-
-  // Theme toggle
   themeToggle.addEventListener("click", toggleTheme);
-
-  // Scroll event for navbar
   window.addEventListener("scroll", handleScroll);
 }
 
@@ -257,16 +281,16 @@ function openLightbox(index) {
   lightboxTitle.textContent = memory.title;
   lightboxDescription.textContent = memory.description;
   lightboxDate.textContent = memory.date;
-  lightboxCategory.textContent = memory.category;
+  lightboxCategory.textContent = memory.category.join(", ");
 
   lightbox.classList.add("active");
-  document.body.style.overflow = "hidden"; // Prevent scrolling
+  document.body.style.overflow = "hidden";
 }
 
 // Close the lightbox
 function closeLightbox() {
   lightbox.classList.remove("active");
-  document.body.style.overflow = ""; // Restore scrolling
+  document.body.style.overflow = "";
 }
 
 // Navigate through images in the lightbox
@@ -280,9 +304,7 @@ function navigateLightbox(direction) {
 // Open the add memory modal
 function openAddMemoryModal() {
   addMemoryModal.classList.add("active");
-  document.body.style.overflow = "hidden"; // Prevent scrolling
-
-  // Set default date to today
+  document.body.style.overflow = "hidden";
   document.getElementById("memoryDate").valueAsDate = new Date();
 }
 
@@ -291,7 +313,7 @@ function closeAddMemoryModal() {
   addMemoryModal.classList.remove("active");
   addMemoryForm.reset();
   filePreview.innerHTML = "";
-  document.body.style.overflow = ""; // Restore scrolling
+  document.body.style.overflow = "";
 }
 
 // Handle file input preview
@@ -311,74 +333,96 @@ function handleFilePreview(e) {
   }
 }
 
+// Upload image to Imgur
+async function uploadToImgur(file) {
+  const clientID = "89fb5d88289de64";
+  const formData = new FormData();
+  formData.append("image", file);
+  formData.append("type", "file");
+  formData.append("title", document.getElementById("memoryTitle").value);
+  formData.append(
+    "description",
+    document.getElementById("memoryDescription").value
+  );
+
+  try {
+    const response = await fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: {
+        Authorization: `Client-ID ${clientID}`,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      return data.data.link;
+    } else {
+      throw new Error("Upload failed: " + data.data.error);
+    }
+  } catch (error) {
+    console.error("Error uploading to Imgur:", error);
+    showNotification("Failed to upload image to Imgur", "error");
+    return null;
+  }
+}
+
 // Handle form submission for adding a new memory
-function handleAddMemory(e) {
+async function handleAddMemory(e) {
   e.preventDefault();
 
-  // Get file
   const file = fileInput.files[0];
-
   if (!file) {
     showNotification("Please select an image", "error");
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = function (event) {
-    // Create new memory object
-    const newMemory = {
-      id: Date.now(), // Use timestamp as ID
-      title: document.getElementById("memoryTitle").value,
-      description: document.getElementById("memoryDescription").value,
-      date: new Date(
-        document.getElementById("memoryDate").value
-      ).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
-      category: document.getElementById("memoryCategory").value,
-      year: new Date(document.getElementById("memoryDate").value)
-        .getFullYear()
-        .toString(),
-      image: event.target.result,
-    };
+  const imageUrl = await uploadToImgur(file);
+  if (!imageUrl) {
+    return;
+  }
 
-    // Get existing memories from localStorage
-    let savedMemories = JSON.parse(localStorage.getItem("memories") || "[]");
-
-    // Add new memory
-    savedMemories.unshift(newMemory);
-
-    // Save to localStorage
-    localStorage.setItem("memories", JSON.stringify(savedMemories));
-
-    // Update memories array
-    memories = [...savedMemories, ...defaultMemories];
-
-    // Reset filter to show all
-    currentFilter = "all";
-    filterButtons.forEach((btn) => btn.classList.remove("active"));
-    document.querySelector('[data-filter="all"]').classList.add("active");
-
-    // Refresh gallery
-    initializeGallery();
-
-    // Close modal
-    closeAddMemoryModal();
-
-    // Show success message
-    showNotification("Memory added successfully!");
+  const newMemory = {
+    id: Date.now(),
+    title: document.getElementById("memoryTitle").value,
+    description: document.getElementById("memoryDescription").value,
+    date: new Date(
+      document.getElementById("memoryDate").value
+    ).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+    category: [document.getElementById("memoryCategory").value],
+    year: new Date(document.getElementById("memoryDate").value)
+      .getFullYear()
+      .toString(),
+    image: imageUrl,
   };
 
-  reader.readAsDataURL(file);
+  if (typeof firebase !== "undefined" && db) {
+    try {
+      console.log("Saving new memory to Firebase:", newMemory);
+      await db
+        .collection("memories")
+        .doc(newMemory.id.toString())
+        .set(newMemory);
+      closeAddMemoryModal();
+      showNotification("Memory added successfully!");
+    } catch (error) {
+      console.error("Error saving to Firebase:", error);
+      showNotification("Failed to save memory", "error");
+    }
+  } else {
+    console.error("Firebase not available, cannot save memory.");
+    showNotification("Cannot save memory, Firebase not loaded", "error");
+  }
 }
 
 // Show a notification message
 function showNotification(message, type = "success") {
   const notification = document.createElement("div");
   notification.className = `notification ${type} scale-in`;
-
   const icon = type === "success" ? "check-circle" : "exclamation-circle";
 
   notification.innerHTML = `
@@ -389,13 +433,9 @@ function showNotification(message, type = "success") {
   `;
 
   document.body.appendChild(notification);
-
-  // Remove notification after 3 seconds
   setTimeout(() => {
-    notification.classList.add("fade-out");
-    setTimeout(() => {
-      notification.remove();
-    }, 300);
+    notification.className += " fade-out";
+    setTimeout(() => notification.remove(), 300);
   }, 3000);
 }
 
@@ -451,7 +491,6 @@ function initScrollAnimations() {
     { threshold: 0.1 }
   );
 
-  // Observe all sections
   document.querySelectorAll("section").forEach((section) => {
     section.classList.add("hidden");
     observer.observe(section);
@@ -465,28 +504,46 @@ style.textContent = `
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: var(--accent-primary);
+    background-color: var(--accent-primary, #4CAF50);
     color: white;
     padding: 15px 20px;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-soft);
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     z-index: 1000;
   }
-  
   .notification-content {
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  
   .notification.fade-out {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.3s, transform 0.3s;
   }
-  
   .notification.error {
     background-color: #e74c3c;
+  }
+  .gallery-item {
+    position: relative;
+  }
+  .gallery-item-overlay {
+    position: absolute;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    width: 100%;
+    padding: 5px;
+  }
+  .fade-in {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+  .hidden {
+    opacity: 0;
   }
 `;
 document.head.appendChild(style);
