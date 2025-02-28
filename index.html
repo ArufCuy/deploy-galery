@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>MemoryVault | Photo Gallery</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="loading-screen" id="loadingScreen">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p>Loading Memories...</p>
+    </div>
+
+    <header>
+      <div class="header-content">
+        <h1 class="logo">Mubarak<span>Family</span></h1>
+        <p class="tagline">Capture our precious moments</p>
+      </div>
+    </header>
+
+    <nav id="mainNav">
+      <div class="nav-container">
+        <div class="logo-container">
+          <h2 class="nav-logo">MUFAMS</h2>
+        </div>
+        <div class="nav-links">
+          <a href="#" class="active"><i class="fas fa-home"></i> Home</a>
+          <a href="#gallery"><i class="fas fa-images"></i> Gallery</a>
+          <a href="PhotoBooth.html"
+            ><i class="fas fa-camera"></i> Photo Booth</a
+          >
+          <a href="#about"><i class="fas fa-info-circle"></i> About</a>
+        </div>
+        <div class="nav-actions">
+          <button id="addMemoryBtn" class="btn-primary">
+            <i class="fas fa-plus"></i> Add Memory
+          </button>
+          <button id="themeToggle" class="btn-icon">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <section id="gallery" class="gallery-section">
+        <div class="section-header">
+          <h2>Photo Gallery</h2>
+          <div class="filter-container">
+            <div class="filter-label">Filter by:</div>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="2023">2023</button>
+              <button class="filter-btn" data-filter="2024">2024</button>
+              <button class="filter-btn" data-filter="2024">2025</button>
+              <button class="filter-btn" data-filter="friends">Friends</button>
+              <button class="filter-btn" data-filter="mubarak">Mubarak</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+          <!-- Gallery items will be loaded by JavaScript -->
+          <!-- Skeleton loading placeholders -->
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+        </div>
+      </section>
+
+      <section id="about" class="about-section">
+        <div class="about-content">
+          <h2>About MemoryVault</h2>
+          <p>
+            MemoryVault is a personal gallery to preserve and showcase your
+            precious moments with friends and loved ones. This platform allows
+            you to organize your photos by categories, years, and events, making
+            it easier to revisit those special memories.
+          </p>
+          <p>
+            Created with love and attention to detail, MemoryVault combines
+            elegant design with modern functionality to give your photos the
+            showcase they deserve.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <div id="lightbox" class="lightbox">
+      <div class="lightbox-content">
+        <button class="lightbox-close" id="lightboxClose">
+          <i class="fas fa-times"></i>
+        </button>
+        <button class="lightbox-nav prev" id="lightboxPrev">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="lightbox-image-container">
+          <img src="" alt="" id="lightboxImage" />
+        </div>
+        <button class="lightbox-nav next" id="lightboxNext">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="lightbox-details">
+          <h3 id="lightboxTitle"></h3>
+          <p id="lightboxDescription"></p>
+          <div class="lightbox-meta">
+            <span id="lightboxDate"></span>
+            <span id="lightboxCategory"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="addMemoryModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Add New Memory</h3>
+          <button class="modal-close" id="modalClose">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="addMemoryForm">
+            <div class="form-group">
+              <label for="memoryTitle">Title</label>
+              <input
+                type="text"
+                id="memoryTitle"
+                placeholder="Enter a title for this memory"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="memoryDescription">Description</label>
+              <textarea
+                id="memoryDescription"
+                placeholder="Describe this memory..."
+                required
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="memoryDate">Date</label>
+              <input type="date" id="memoryDate" required />
+            </div>
+            <div class="form-group">
+              <label for="memoryCategory">Category</label>
+              <select id="memoryCategory" required>
+                <option value="">Select a category</option>
+                <option value="friends">Friends</option>
+                <option value="travel">Travel</option>
+                <option value="family">Family</option>
+                <option value="events">Events</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="memoryImage">Upload Image</label>
+              <div class="file-upload">
+                <input type="file" id="memoryImage" accept="image/*" required />
+                <label for="memoryImage" class="file-upload-label">
+                  <i class="fas fa-cloud-upload-alt"></i> Choose a file
+                </label>
+                <div id="filePreview" class="file-preview"></div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" id="cancelAddMemory">
+                Cancel
+              </button>
+              <button type="submit" class="btn-primary">Save Memory</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-logo">
+          <h3>Memory<span>Vault</span></h3>
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="footer-social">
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 MemoryVault. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
