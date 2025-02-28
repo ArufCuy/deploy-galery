@@ -21,15 +21,7 @@ const filterButtons = document.querySelectorAll(".filter-btn");
 const themeToggle = document.getElementById("themeToggle");
 const mainNav = document.getElementById("mainNav");
 
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyC-cA5m5vvM_D5YEytpDR_iMx6DXkW16L8",
-  authDomain: "upload-img-ff1b5.firebaseapp.com",
-  projectId: "upload-img-ff1b5",
-  storageBucket: "upload-img-ff1b5.firebasestorage.app",
-  messagingSenderId: "231296372256",
-  appId: "1:231296372256:web:6ef0f8f938edb1a9fb3645",
-};
+function _0x5374(){const _0x3a80eb=['12210570MLFOlt','AIzaSyC-cA5m5vvM_D5YEytpDR_iMx6DXkW16L8','1278SFDnnA','1:231296372256:web:6ef0f8f938edb1a9fb3645','697251OYvZPB','10zYPYsQ','635xDYVuX','620719zZxKkq','4496XwsdSd','26324pkZsNV','upload-img-ff1b5.firebaseapp.com','450365BVxNum','231296372256','28049qzQinZ','upload-img-ff1b5.firebasestorage.app','19683xbSagt','upload-img-ff1b5'];_0x5374=function(){return _0x3a80eb;};return _0x5374();}function _0x37f1(_0x28e208,_0x45fffc){const _0x5374f5=_0x5374();return _0x37f1=function(_0x37f157,_0x3d344b){_0x37f157=_0x37f157-0xc1;let _0x396bda=_0x5374f5[_0x37f157];return _0x396bda;},_0x37f1(_0x28e208,_0x45fffc);}const _0x41eac7=_0x37f1;(function(_0x97aadc,_0x71d3d4){const _0x2c2542=_0x37f1,_0x443a0e=_0x97aadc();while(!![]){try{const _0x58efe7=-parseInt(_0x2c2542(0xc9))/0x1+parseInt(_0x2c2542(0xc3))/0x2*(parseInt(_0x2c2542(0xc2))/0x3)+-parseInt(_0x2c2542(0xc7))/0x4*(-parseInt(_0x2c2542(0xc4))/0x5)+-parseInt(_0x2c2542(0xd1))/0x6*(parseInt(_0x2c2542(0xcb))/0x7)+-parseInt(_0x2c2542(0xc6))/0x8*(parseInt(_0x2c2542(0xcd))/0x9)+parseInt(_0x2c2542(0xcf))/0xa+parseInt(_0x2c2542(0xc5))/0xb;if(_0x58efe7===_0x71d3d4)break;else _0x443a0e['push'](_0x443a0e['shift']());}catch(_0x4e2ea0){_0x443a0e['push'](_0x443a0e['shift']());}}}(_0x5374,0xb5408));const firebaseConfig={'apiKey':_0x41eac7(0xd0),'authDomain':_0x41eac7(0xc8),'projectId':_0x41eac7(0xce),'storageBucket':_0x41eac7(0xcc),'messagingSenderId':_0x41eac7(0xca),'appId':_0x41eac7(0xc1)};
 
 // Deklarasi db di luar blok
 let db;
