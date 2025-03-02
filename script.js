@@ -93,7 +93,7 @@ let db;
 
 // Pastikan Firebase ada sebelum inisialisasi
 if (typeof firebase === "undefined") {
-    console.error("Firebase SDK not loaded. Check script tags in HTML.");
+    console.error("Firebase SDK belum dimuat. Cek tag script di HTML.");
 } else {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
@@ -194,11 +194,11 @@ let isSubmitting = false;
 
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("App starting...");
+    console.log("Aplikasi dimulai...");
     if (typeof firebase !== "undefined" && db) {
         loadMemoriesFromFirebase();
         setTimeout(() => {
-            console.log("Hiding loading screen...");
+            console.log("Menyembunyikan layar loading...");
             loadingScreen.classList.add("hidden");
             initializeGallery();
         }, 2000);
@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
             toggleTheme();
         }
     } else {
-        console.error("Firebase not available, loading default memories...");
+        console.error("Firebase tidak tersedia, memuat data default...");
         memories = [...defaultMemories];
         filteredMemories = [...memories];
         setTimeout(() => {
@@ -227,33 +227,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Load memories from Firebase with real-time listener
 function loadMemoriesFromFirebase() {
-    console.log("Loading memories from Firebase...");
+    console.log("Memuat kenangan dari Firebase...");
     db.collection("memories")
         .orderBy("id", "desc")
         .onSnapshot(
             (snapshot) => {
-                console.log("Snapshot received:", snapshot.docs.length, "items");
+                console.log("Snapshot diterima:", snapshot.docs.length, "item");
                 memories = snapshot.docs.map((doc) => doc.data());
                 if (memories.length === 0) {
-                    console.log("No data in Firebase, using default memories...");
+                    console.log("Tidak ada data di Firebase, menggunakan data default...");
                     memories = [...defaultMemories];
                 }
                 filteredMemories = [...memories];
                 initializeGallery();
             },
             (error) => {
-                console.error("Error loading memories from Firebase:", error);
+                console.error("Gagal memuat kenangan dari Firebase:", error);
                 memories = [...defaultMemories];
                 filteredMemories = [...memories];
                 initializeGallery();
-                showNotification("Failed to connect to Firebase, using default data", "error");
+                showNotification("Gagal terhubung ke Firebase, menggunakan data default", "error");
             }
         );
 }
 
 // Initialize the gallery with photos
 function initializeGallery() {
-    console.log("Initializing gallery with", filteredMemories.length, "items");
+    console.log("Menginisialisasi galeri dengan", filteredMemories.length, "item");
     galleryGrid.innerHTML = "";
     filteredMemories =
         currentFilter === "all" ?
@@ -289,7 +289,7 @@ function initializeGallery() {
         emptyMessage.className = "empty-gallery-message";
         emptyMessage.innerHTML = `
             <i class="fas fa-search"></i>
-            <p>No memories found for this filter. Try another category or add new memories!</p>
+            <p>Tidak ada kenangan ditemukan untuk filter ini. Coba kategori lain atau tambah kenangan baru!</p>
         `;
         galleryGrid.appendChild(emptyMessage);
     }
@@ -412,11 +412,11 @@ async function uploadToImgur(file) {
         if (data.success) {
             return data.data.link;
         } else {
-            throw new Error("Upload failed: " + data.data.error);
+            throw new Error("Gagal upload: " + data.data.error);
         }
     } catch (error) {
-        console.error("Error uploading to Imgur:", error);
-        showNotification("Failed to upload image to Imgur", "error");
+        console.error("Error saat upload ke Imgur:", error);
+        showNotification("Gagal mengupload gambar ke Imgur", "error");
         return null;
     }
 }
@@ -426,31 +426,31 @@ async function sendToDiscordWebhook(newMemory) {
     const webhookURL = "https://discord.com/api/webhooks/1345608708922806283/26UJQhP-XaR1Ue7FnH9bLgOKeeiOB7o4aFF6v4MAGbjTpavaDOYoV3h3FDFocm26izEK";
 
     const embed = {
-        title: "New Memory Added! 📸",
+        title: "Kenangan Baru Ditambahkan! 📸",
         color: 5814783,
         fields: [{
-                name: "Title",
-                value: newMemory.title || "Untitled",
+                name: "Judul",
+                value: newMemory.title || "Tanpa Judul",
                 inline: true,
             },
             {
-                name: "Date",
-                value: newMemory.date || "No date",
+                name: "Tanggal",
+                value: newMemory.date || "Tanpa Tanggal",
                 inline: true,
             },
             {
-                name: "Categories",
-                value: newMemory.category.join(", ") || "Uncategorized",
+                name: "Kategori",
+                value: newMemory.category.join(", ") || "Tanpa Kategori",
                 inline: true,
             },
             {
-                name: "Description",
-                value: newMemory.description || "No description",
+                name: "Deskripsi",
+                value: newMemory.description || "Tanpa Deskripsi",
                 inline: false,
             },
             {
-                name: "Year",
-                value: newMemory.year || "No year",
+                name: "Tahun",
+                value: newMemory.year || "Tanpa Tahun",
                 inline: true,
             },
             {
@@ -461,7 +461,7 @@ async function sendToDiscordWebhook(newMemory) {
         ],
         timestamp: new Date().toISOString(),
         footer: {
-            text: "Memory Gallery Notification",
+            text: "Notifikasi Galeri Kenangan",
         },
     };
 
@@ -477,12 +477,30 @@ async function sendToDiscordWebhook(newMemory) {
         });
 
         if (!response.ok) {
-            throw new Error("Failed to send webhook");
+            throw new Error("Gagal mengirim webhook");
         }
-        console.log("Webhook sent successfully");
+        console.log("Webhook berhasil dikirim");
     } catch (error) {
-        console.error("Error sending to Discord webhook:", error);
-        showNotification("Failed to send Discord notification", "error");
+        console.error("Error saat mengirim ke Discord webhook:", error);
+        showNotification("Gagal mengirim notifikasi Discord", "error");
+    }
+}
+
+// Ambil daftar password dari Firebase
+async function getValidPasswords() {
+    try {
+        const docRef = await db.collection("uploadPasswords").doc("config").get();
+        if (docRef.exists) {
+            const data = docRef.data();
+            return data.passwords || [];
+        } else {
+            console.error("Dokumen config tidak ditemukan di Firebase!");
+            return ["Mubarakabsurt"]; // Fallback ke password default kalau dokumen nggak ada
+        }
+    } catch (error) {
+        console.error("Gagal mengambil password dari Firebase:", error);
+        showNotification("Gagal memuat password, pakai default", "error");
+        return ["Mubarakabsurt"]; // Fallback ke default kalau error
     }
 }
 
@@ -492,22 +510,32 @@ async function handleAddMemory(e) {
 
     // Check if already submitting
     if (isSubmitting) {
-        showNotification("Please wait, upload in progress...", "error");
+        showNotification("Tunggu, upload sedang berlangsung...", "error");
         return;
     }
 
     const submitButton = addMemoryForm.querySelector('button[type="submit"]');
     const originalButtonText = submitButton.textContent;
+    const passwordInput = document.getElementById("uploadPassword").value;
 
-    // Start submission process
+    // Ambil daftar password dari Firebase
+    const validPasswords = await getValidPasswords();
+
+    // Cek apakah password yang dimasukkan ada di daftar
+    if (!validPasswords.includes(passwordInput)) {
+        showNotification("Password salah, coba lagi!", "error");
+        return;
+    }
+
+    // Mulai proses submit
     isSubmitting = true;
     submitButton.disabled = true;
-    submitButton.textContent = "Uploading...";
-    showNotification("Uploading memory, please wait...", "success");
+    submitButton.textContent = "Mengupload...";
+    showNotification("Mengupload kenangan, tunggu bentar ya...", "success");
 
     const file = fileInput.files[0];
     if (!file) {
-        showNotification("Please select an image", "error");
+        showNotification("Pilih gambar dulu dong!", "error");
         submitButton.disabled = false;
         submitButton.textContent = originalButtonText;
         isSubmitting = false;
@@ -542,7 +570,7 @@ async function handleAddMemory(e) {
 
     if (typeof firebase !== "undefined" && db) {
         try {
-            console.log("Saving new memory to Firebase:", newMemory);
+            console.log("Menyimpan kenangan baru ke Firebase:", newMemory);
             await db
                 .collection("memories")
                 .doc(newMemory.id.toString())
@@ -550,24 +578,24 @@ async function handleAddMemory(e) {
 
             await sendToDiscordWebhook(newMemory);
             closeAddMemoryModal();
-            showNotification("Memory added successfully!");
+            showNotification("Kenangan berhasil ditambahkan!");
 
-            // Add 5-second cooldown after successful upload
+            // Tambah cooldown 5 detik setelah sukses
             setTimeout(() => {
                 isSubmitting = false;
                 submitButton.disabled = false;
                 submitButton.textContent = originalButtonText;
             }, 5000);
         } catch (error) {
-            console.error("Error saving to Firebase:", error);
-            showNotification("Failed to save memory", "error");
+            console.error("Gagal menyimpan ke Firebase:", error);
+            showNotification("Gagal menyimpan kenangan", "error");
             submitButton.disabled = false;
             submitButton.textContent = originalButtonText;
             isSubmitting = false;
         }
     } else {
-        console.error("Firebase not available, cannot save memory.");
-        showNotification("Cannot save memory, Firebase not loaded", "error");
+        console.error("Firebase tidak tersedia, gagal menyimpan kenangan.");
+        showNotification("Gagal menyimpan kenangan, Firebase tidak dimuat", "error");
         submitButton.disabled = false;
         submitButton.textContent = originalButtonText;
         isSubmitting = false;
