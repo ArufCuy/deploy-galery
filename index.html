@@ -40,8 +40,8 @@
           <h2 class="nav-logo">MUFAMS</h2>
         </div>
         <div class="nav-links">
-          <a href="" class="active"><i class="fas fa-home"></i> Home</a>
-          <a href="gallery.html"><i class="fas fa-images"></i> Gallery</a>
+          <a href="#" class="active"><i class="fas fa-home"></i> Home</a>
+          <a href="#gallery"><i class="fas fa-images"></i> Gallery</a>
           <a href="photobooth.html"
             ><i class="fas fa-camera"></i> Photo Booth</a
           >
@@ -49,7 +49,7 @@
         </div>
         <div class="nav-actions">
           <button id="addMemoryBtn" class="btn-primary">
-            <i class="fas fa-plus"></i> Sedang Perbaikan
+            <i class="fas fa-plus"></i> Upload
           </button>
           <button id="themeToggle" class="btn-icon">
             <i class="fas fa-moon"></i>
@@ -66,11 +66,11 @@
             <div class="filter-label">Filter by:</div>
             <div class="filter-buttons">
               <button class="filter-btn active" data-filter="all">All</button>
-              <button class="filter-btn" data-filter="2023">2023</button>
-              <button class="filter-btn" data-filter="2024">2024</button>
               <button class="filter-btn" data-filter="2025">2025</button>
               <button class="filter-btn" data-filter="friends">Friends</button>
-              <button class="filter-btn" data-filter="mubarak">Mubarak</button>
+              <button class="filter-btn" data-filter="memories">
+                Memories
+              </button>
             </div>
           </div>
         </div>
@@ -83,9 +83,12 @@
           <div class="gallery-item skeleton"></div>
           <div class="gallery-item skeleton"></div>
           <div class="gallery-item skeleton"></div>
-          <div class="gallery-item skeleton"></div>
-          <div class="gallery-item skeleton"></div>
-          <div class="gallery-item skeleton"></div>
+        </div>
+        
+        <div class="load-more-container">
+          <button id="loadMoreBtn" class="btn-secondary">
+            <i class="fas fa-plus"></i> Load More Photos
+          </button>
         </div>
       </section>
 
@@ -166,6 +169,8 @@
             <div class="form-group">
               <label for="memoryCategory">Category</label>
               <select id="memoryCategory" required>
+                <option value="">Select a category</option>
+
                 <optgroup label="Social & Relationships">
                   <option value="friends">Friends</option>
                   <option value="family">Family</option>
@@ -214,7 +219,13 @@
                   <i class="fas fa-cloud-upload-alt"></i> Choose a file
                 </label>
                 <div id="filePreview" class="file-preview"></div>
-                <input type="password" id="uploadPassword" placeholder="Masukkan password untuk upload" required>
+                <br />
+                <input
+                  type="password"
+                  id="uploadPassword"
+                  placeholder="Masukkan password untuk upload"
+                  required
+                />
               </div>
             </div>
             <div class="form-actions">
