@@ -207,21 +207,6 @@
                   <option value="halloween">Halloween</option>
                 </optgroup>
               </select>
-              <script>
-                let selectedOptions = [];
-
-                document
-                  .getElementById("memoryCategory")
-                  .addEventListener("change", function () {
-                    let value = this.value;
-                    if (value && !selectedOptions.includes(value)) {
-                      selectedOptions.push(value);
-                    }
-                    this.value = ""; // Reset dropdown agar tetap bisa memilih opsi lain
-                    document.getElementById("selectedCategories").innerText =
-                      selectedOptions.join(", ");
-                  });
-              </script>
             </div>
             <div class="form-group">
               <label for="memoryImage">Upload Image</label>
