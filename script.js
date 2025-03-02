@@ -21,7 +21,72 @@ const filterButtons = document.querySelectorAll(".filter-btn");
 const themeToggle = document.getElementById("themeToggle");
 const mainNav = document.getElementById("mainNav");
 
-function _0x5374(){const _0x3a80eb=['12210570MLFOlt','AIzaSyC-cA5m5vvM_D5YEytpDR_iMx6DXkW16L8','1278SFDnnA','1:231296372256:web:6ef0f8f938edb1a9fb3645','697251OYvZPB','10zYPYsQ','635xDYVuX','620719zZxKkq','4496XwsdSd','26324pkZsNV','upload-img-ff1b5.firebaseapp.com','450365BVxNum','231296372256','28049qzQinZ','upload-img-ff1b5.firebasestorage.app','19683xbSagt','upload-img-ff1b5'];_0x5374=function(){return _0x3a80eb;};return _0x5374();}function _0x37f1(_0x28e208,_0x45fffc){const _0x5374f5=_0x5374();return _0x37f1=function(_0x37f157,_0x3d344b){_0x37f157=_0x37f157-0xc1;let _0x396bda=_0x5374f5[_0x37f157];return _0x396bda;},_0x37f1(_0x28e208,_0x45fffc);}const _0x41eac7=_0x37f1;(function(_0x97aadc,_0x71d3d4){const _0x2c2542=_0x37f1,_0x443a0e=_0x97aadc();while(!![]){try{const _0x58efe7=-parseInt(_0x2c2542(0xc9))/0x1+parseInt(_0x2c2542(0xc3))/0x2*(parseInt(_0x2c2542(0xc2))/0x3)+-parseInt(_0x2c2542(0xc7))/0x4*(-parseInt(_0x2c2542(0xc4))/0x5)+-parseInt(_0x2c2542(0xd1))/0x6*(parseInt(_0x2c2542(0xcb))/0x7)+-parseInt(_0x2c2542(0xc6))/0x8*(parseInt(_0x2c2542(0xcd))/0x9)+parseInt(_0x2c2542(0xcf))/0xa+parseInt(_0x2c2542(0xc5))/0xb;if(_0x58efe7===_0x71d3d4)break;else _0x443a0e['push'](_0x443a0e['shift']());}catch(_0x4e2ea0){_0x443a0e['push'](_0x443a0e['shift']());}}}(_0x5374,0xb5408));const firebaseConfig={'apiKey':_0x41eac7(0xd0),'authDomain':_0x41eac7(0xc8),'projectId':_0x41eac7(0xce),'storageBucket':_0x41eac7(0xcc),'messagingSenderId':_0x41eac7(0xca),'appId':_0x41eac7(0xc1)};
+function _0x5374() {
+  const _0x3a80eb = [
+    "12210570MLFOlt",
+    "AIzaSyC-cA5m5vvM_D5YEytpDR_iMx6DXkW16L8",
+    "1278SFDnnA",
+    "1:231296372256:web:6ef0f8f938edb1a9fb3645",
+    "697251OYvZPB",
+    "10zYPYsQ",
+    "635xDYVuX",
+    "620719zZxKkq",
+    "4496XwsdSd",
+    "26324pkZsNV",
+    "upload-img-ff1b5.firebaseapp.com",
+    "450365BVxNum",
+    "231296372256",
+    "28049qzQinZ",
+    "upload-img-ff1b5.firebasestorage.app",
+    "19683xbSagt",
+    "upload-img-ff1b5",
+  ];
+  _0x5374 = function () {
+    return _0x3a80eb;
+  };
+  return _0x5374();
+}
+function _0x37f1(_0x28e208, _0x45fffc) {
+  const _0x5374f5 = _0x5374();
+  return (
+    (_0x37f1 = function (_0x37f157, _0x3d344b) {
+      _0x37f157 = _0x37f157 - 0xc1;
+      let _0x396bda = _0x5374f5[_0x37f157];
+      return _0x396bda;
+    }),
+    _0x37f1(_0x28e208, _0x45fffc)
+  );
+}
+const _0x41eac7 = _0x37f1;
+(function (_0x97aadc, _0x71d3d4) {
+  const _0x2c2542 = _0x37f1,
+    _0x443a0e = _0x97aadc();
+  while (!![]) {
+    try {
+      const _0x58efe7 =
+        -parseInt(_0x2c2542(0xc9)) / 0x1 +
+        (parseInt(_0x2c2542(0xc3)) / 0x2) * (parseInt(_0x2c2542(0xc2)) / 0x3) +
+        (-parseInt(_0x2c2542(0xc7)) / 0x4) *
+          (-parseInt(_0x2c2542(0xc4)) / 0x5) +
+        (-parseInt(_0x2c2542(0xd1)) / 0x6) * (parseInt(_0x2c2542(0xcb)) / 0x7) +
+        (-parseInt(_0x2c2542(0xc6)) / 0x8) * (parseInt(_0x2c2542(0xcd)) / 0x9) +
+        parseInt(_0x2c2542(0xcf)) / 0xa +
+        parseInt(_0x2c2542(0xc5)) / 0xb;
+      if (_0x58efe7 === _0x71d3d4) break;
+      else _0x443a0e["push"](_0x443a0e["shift"]());
+    } catch (_0x4e2ea0) {
+      _0x443a0e["push"](_0x443a0e["shift"]());
+    }
+  }
+})(_0x5374, 0xb5408);
+const firebaseConfig = {
+  apiKey: _0x41eac7(0xd0),
+  authDomain: _0x41eac7(0xc8),
+  projectId: _0x41eac7(0xce),
+  storageBucket: _0x41eac7(0xcc),
+  messagingSenderId: _0x41eac7(0xca),
+  appId: _0x41eac7(0xc1),
+};
 
 // Deklarasi db di luar blok
 let db;
@@ -208,15 +273,15 @@ function initializeGallery() {
     galleryItem.style.animationDelay = `${index * 0.1}s`;
 
     galleryItem.innerHTML = `
-      <img src="${memory.image}" alt="${memory.title}" loading="lazy">
-      <div class="gallery-item-overlay">
-        <h3 class="gallery-item-title">${memory.title}</h3>
-        <div class="gallery-item-meta">
-          <span>${memory.date}</span>
-          <span>${memory.category.join(", ")}</span>
-        </div>
-      </div>
-    `;
+            <img src="${memory.image}" alt="${memory.title}" loading="lazy">
+            <div class="gallery-item-overlay">
+                <h3 class="gallery-item-title">${memory.title}</h3>
+                <div class="gallery-item-meta">
+                    <span>${memory.date}</span>
+                    <span>${memory.category.join(", ")}</span>
+                </div>
+            </div>
+        `;
 
     galleryItem.addEventListener("click", () => openLightbox(index));
     galleryGrid.appendChild(galleryItem);
@@ -226,9 +291,9 @@ function initializeGallery() {
     const emptyMessage = document.createElement("div");
     emptyMessage.className = "empty-gallery-message";
     emptyMessage.innerHTML = `
-      <i class="fas fa-search"></i>
-      <p>No memories found for this filter. Try another category or add new memories!</p>
-    `;
+            <i class="fas fa-search"></i>
+            <p>No memories found for this filter. Try another category or add new memories!</p>
+        `;
     galleryGrid.appendChild(emptyMessage);
   }
 }
@@ -359,6 +424,72 @@ async function uploadToImgur(file) {
   }
 }
 
+// Send notification to Discord webhook
+async function sendToDiscordWebhook(newMemory) {
+  const webhookURL = "https://discord.com/api/webhooks/1345608708922806283/26UJQhP-XaR1Ue7FnH9bLgOKeeiOB7o4aFF6v4MAGbjTpavaDOYoV3h3FDFocm26izEK"; // Replace with your Discord webhook URL
+
+  const embed = {
+    title: "New Memory Added! 📸",
+    color: 5814783, // Light blue color in decimal
+    fields: [
+      {
+        name: "Title",
+        value: newMemory.title || "Untitled",
+        inline: true,
+      },
+      {
+        name: "Date",
+        value: newMemory.date || "No date",
+        inline: true,
+      },
+      {
+        name: "Categories",
+        value: newMemory.category.join(", ") || "Uncategorized",
+        inline: true,
+      },
+      {
+        name: "Description",
+        value: newMemory.description || "No description",
+        inline: false,
+      },
+      {
+        name: "Year",
+        value: newMemory.year || "No year",
+        inline: true,
+      },
+      {
+        name: "ID",
+        value: newMemory.id.toString(),
+        inline: true,
+      },
+    ],
+    timestamp: new Date().toISOString(),
+    footer: {
+      text: "Memory Gallery Notification",
+    },
+  };
+
+  try {
+    const response = await fetch(webhookURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        embeds: [embed],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to send webhook");
+    }
+    console.log("Webhook sent successfully");
+  } catch (error) {
+    console.error("Error sending to Discord webhook:", error);
+    showNotification("Failed to send Discord notification", "error");
+  }
+}
+
 // Handle form submission for adding a new memory
 async function handleAddMemory(e) {
   e.preventDefault();
@@ -399,6 +530,10 @@ async function handleAddMemory(e) {
         .collection("memories")
         .doc(newMemory.id.toString())
         .set(newMemory);
+
+      // Send to Discord webhook after successful Firebase save
+      await sendToDiscordWebhook(newMemory);
+
       closeAddMemoryModal();
       showNotification("Memory added successfully!");
     } catch (error) {
@@ -418,11 +553,11 @@ function showNotification(message, type = "success") {
   const icon = type === "success" ? "check-circle" : "exclamation-circle";
 
   notification.innerHTML = `
-    <div class="notification-content">
-      <i class="fas fa-${icon}"></i>
-      <p>${message}</p>
-    </div>
-  `;
+        <div class="notification-content">
+            <i class="fas fa-${icon}"></i>
+            <p>${message}</p>
+        </div>
+    `;
 
   document.body.appendChild(notification);
   setTimeout(() => {
@@ -492,50 +627,50 @@ function initScrollAnimations() {
 // Add CSS for notification and hidden elements
 const style = document.createElement("style");
 style.textContent = `
-  .notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: var(--accent-primary, #4CAF50);
-    color: white;
-    padding: 15px 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    z-index: 1000;
-  }
-  .notification-content {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .notification.fade-out {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s, transform 0.3s;
-  }
-  .notification.error {
-    background-color: #e74c3c;
-  }
-  .gallery-item {
-    position: relative;
-  }
-  .gallery-item-overlay {
-    position: absolute;
-    bottom: 0;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    width: 100%;
-    padding: 5px;
-  }
-  .fade-in {
-    opacity: 0;
-    animation: fadeIn 0.5s forwards;
-  }
-  @keyframes fadeIn {
-    to { opacity: 1; }
-  }
-  .hidden {
-    opacity: 0;
-  }
+    .notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: var(--accent-primary, #4CAF50);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .notification.fade-out {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    .notification.error {
+        background-color: #e74c3c;
+    }
+    .gallery-item {
+        position: relative;
+    }
+    .gallery-item-overlay {
+        position: absolute;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        width: 100%;
+        padding: 5px;
+    }
+    .fade-in {
+        opacity: 0;
+        animation: fadeIn 0.5s forwards;
+    }
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
+    .hidden {
+        opacity: 0;
+    }
 `;
 document.head.appendChild(style);
