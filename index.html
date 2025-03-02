@@ -167,11 +167,64 @@
               <label for="memoryCategory">Category</label>
               <select id="memoryCategory" required>
                 <option value="">Select a category</option>
-                <option value="friends">Friends</option>
-                <option value="travel">Travel</option>
-                <option value="family">Family</option>
-                <option value="events">Events</option>
+
+                <optgroup label="Social & Relationships">
+                  <option value="friends">Friends</option>
+                  <option value="family">Family</option>
+                  <option value="relationships">Relationships</option>
+                  <option value="friendship">Friendship</option>
+                  <option value="family_time">Family Time</option>
+                </optgroup>
+
+                <optgroup label="Travel & Experiences">
+                  <option value="travel">Travel</option>
+                  <option value="food_drinks">Food & Drinks</option>
+                  <option value="events">Events</option>
+                  <option value="memories">Memories</option>
+                </optgroup>
+
+                <optgroup label="Hobbies & Personal Growth">
+                  <option value="hobbies">Hobbies</option>
+                  <option value="learning">Learning</option>
+                  <option value="gaming">Gaming</option>
+                  <option value="thoughts_ideas">Thoughts & Ideas</option>
+                </optgroup>
+
+                <optgroup label="Career & Achievements">
+                  <option value="work">Work</option>
+                  <option value="achievements">Achievements</option>
+                  <option value="milestones">Milestones</option>
+                </optgroup>
+
+                <optgroup label="Special Events & Celebrations">
+                  <option value="birthday">Birthday</option>
+                  <option value="wedding">Wedding</option>
+                  <option value="graduation">Graduation</option>
+                  <option value="new_year">New Year</option>
+                  <option value="eid">Eid (Hari Raya Idul Fitri)</option>
+                  <option value="ramadhan">Ramadhan</option>
+                  <option value="christmas">Christmas</option>
+                  <option value="halloween">Halloween</option>
+                </optgroup>
               </select>
+
+              <p>Selected: <span id="selectedCategories"></span></p>
+
+              <script>
+                let selectedOptions = [];
+
+                document
+                  .getElementById("memoryCategory")
+                  .addEventListener("change", function () {
+                    let value = this.value;
+                    if (value && !selectedOptions.includes(value)) {
+                      selectedOptions.push(value);
+                    }
+                    this.value = ""; // Reset dropdown agar tetap bisa memilih opsi lain
+                    document.getElementById("selectedCategories").innerText =
+                      selectedOptions.join(", ");
+                  });
+              </script>
             </div>
             <div class="form-group">
               <label for="memoryImage">Upload Image</label>
